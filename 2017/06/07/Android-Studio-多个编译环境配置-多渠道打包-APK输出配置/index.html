@@ -1,0 +1,926 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="看完这篇你学到什么：  熟悉gradle的构建配置 熟悉代码构建环境的目录结构，你知道的不仅仅是只有src/main 开发、生成环境等等环境可以任意切换打包 多渠道打包 APK输出文件配置  需求一般我们开发的环境分为：debug 和 release，但是你想再分内测1环境、内测2环境等等怎么办呢？ 这就需要依赖强大的gradle 来配置了。 相关的配置也可以参考谷歌官方文档。 配置构建类型 bu">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Studio 多个编译环境配置 多渠道打包 APK输出配置">
+<meta property="og:url" content="http://www.raeblog.com/2017/06/07/Android-Studio-多个编译环境配置-多渠道打包-APK输出配置/index.html">
+<meta property="og:site_name" content="RAE">
+<meta property="og:description" content="看完这篇你学到什么：  熟悉gradle的构建配置 熟悉代码构建环境的目录结构，你知道的不仅仅是只有src/main 开发、生成环境等等环境可以任意切换打包 多渠道打包 APK输出文件配置  需求一般我们开发的环境分为：debug 和 release，但是你想再分内测1环境、内测2环境等等怎么办呢？ 这就需要依赖强大的gradle 来配置了。 相关的配置也可以参考谷歌官方文档。 配置构建类型 bu">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-08-06T01:51:31.012Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Studio 多个编译环境配置 多渠道打包 APK输出配置">
+<meta name="twitter:description" content="看完这篇你学到什么：  熟悉gradle的构建配置 熟悉代码构建环境的目录结构，你知道的不仅仅是只有src/main 开发、生成环境等等环境可以任意切换打包 多渠道打包 APK输出文件配置  需求一般我们开发的环境分为：debug 和 release，但是你想再分内测1环境、内测2环境等等怎么办呢？ 这就需要依赖强大的gradle 来配置了。 相关的配置也可以参考谷歌官方文档。 配置构建类型 bu">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.raeblog.com/2017/06/07/Android-Studio-多个编译环境配置-多渠道打包-APK输出配置/"/>
+
+
+
+
+
+  <title>Android Studio 多个编译环境配置 多渠道打包 APK输出配置 | RAE</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="//s95.cnzz.com/z_stat.php?id=5827771&web_id=5827771" language="JavaScript"></script>
+  </div>
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">RAE</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Coder</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-apps">
+          <a href="/app/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-android"></i> <br />
+            
+            Apps
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.raeblog.com/2017/06/07/Android-Studio-多个编译环境配置-多渠道打包-APK输出配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="RAE">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/7847664?v=3&s=460">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="RAE">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Android Studio 多个编译环境配置 多渠道打包 APK输出配置</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-07T11:23:35+08:00">
+                2017-06-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-comment-o"></i>
+              </span>
+              
+                <a href="/2017/06/07/Android-Studio-多个编译环境配置-多渠道打包-APK输出配置/#SOHUCS" itemprop="discussionUrl">
+                  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2017/06/07/Android-Studio-多个编译环境配置-多渠道打包-APK输出配置/" itemprop="commentsCount"></span>
+                </a>
+              
+            
+          
+
+          
+          
+             <span id="/2017/06/07/Android-Studio-多个编译环境配置-多渠道打包-APK输出配置/" class="leancloud_visitors" data-flag-title="Android Studio 多个编译环境配置 多渠道打包 APK输出配置">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>看完这篇你学到什么：</p>
+<ul>
+<li>熟悉gradle的构建配置</li>
+<li>熟悉代码构建环境的目录结构，你知道的不仅仅是只有src/main</li>
+<li>开发、生成环境等等环境可以任意切换打包</li>
+<li>多渠道打包</li>
+<li>APK输出文件配置</li>
+</ul>
+<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>一般我们开发的环境分为：debug 和 release，但是你想再分内测1环境、内测2环境等等怎么办呢？</p>
+<p>这就需要依赖强大的gradle 来配置了。</p>
+<p>相关的配置也可以参考<a href="https://developer.android.google.cn/studio/build/build-variants.html?hl=zh-cn" target="_blank" rel="noopener">谷歌官方文档</a>。</p>
+<h2 id="配置构建类型-buildTypes"><a href="#配置构建类型-buildTypes" class="headerlink" title="配置构建类型 buildTypes"></a>配置构建类型 <code>buildTypes</code></h2><p>您可以在模块级 <code>build.gradle</code> 文件的 <code>android {}</code> 代码块内部创建和配置构建类型。当您创建新模块时，Android Studio 会自动为您创建调试和发布这两种构建类型。尽管调试构建类型不会出现在构建配置文件中，Android Studio 会将其配置为 <code>debuggable true</code>。这样，您可以在安全的 Android 设备上调试应用并使用通用调试密钥库配置 APK 签署。</p>
+<p>如果您希望添加或更改特定设置，您可以将调试构建类型添加到您的配置中。以下示例为调试构建类型指定了 <code>applicationIdSuffix</code>，并配置了一个使用调试构建类型中的设置进行初始化的<code>jnidebug</code>构建类型。</p>
+<p><code>applicationIdSuffix:</code> 字段表示，在不改变你默认的程序ID（包名）的情况下，为其添加后缀。比如你的包名是<code>com.rae.app</code>，但你想区分测试包和正式包的情况，这个时候将<code>applicationIdSuffix</code>设置为<code>.debug</code>，那么你的应用程序对应的包名就变成了<code>com.rae.app.debug</code></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    ...</span><br><span class="line">    defaultConfig &#123;...&#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="literal">true</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        debug &#123;</span><br><span class="line">            applicationIdSuffix <span class="string">".debug"</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * The 'initWith' property allows you to copy configurations from other build types,</span></span><br><span class="line"><span class="comment">         * so you don't have to configure one from the beginning. You can then configure</span></span><br><span class="line"><span class="comment">         * just the settings you want to change. The following line initializes</span></span><br><span class="line"><span class="comment">         * 'jnidebug' using the debug build type, and changes only the</span></span><br><span class="line"><span class="comment">         * applicationIdSuffix and versionNameSuffix settings.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line"></span><br><span class="line">        jnidebug &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// This copies the debuggable attribute and debug signing configurations.</span></span><br><span class="line">            initWith debug</span><br><span class="line"></span><br><span class="line">            applicationIdSuffix <span class="string">".jnidebug"</span></span><br><span class="line">            jniDebuggable <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="构建源集"><a href="#构建源集" class="headerlink" title="构建源集"></a>构建源集</h2><p>我们都知道，源代码是放在<code>src/main</code> 文件夹下的，但是由于配置了不同的构建类型像想要区分不同的源文件怎么办呢？这个时候就可以在<code>src</code>对应你的<code>buildTypes</code>来建立文件夹了 ，更多参考<a href="https://developer.android.google.cn/studio/build/index.html?hl=zh-cn#sourcesets" target="_blank" rel="noopener">谷歌源集</a>。</p>
+<p>Android Studio 按逻辑关系将每个模块的源代码和资源分组为源集。模块的 main/ 源集包括其所有构建变体共用的代码和资源。其他源集目录为可选项，在您配置新的构建变体时，Android Studio 不会自动为您创建这些目录。不过，创建类似于 main/ 的源集有助于让 Gradle 只应在构建特定应用版本时使用的文件和资源井然有序：</p>
+<p><code>productFlavor</code> 表示渠道包，可以看下面的<code>多渠道打包</code></p>
+<blockquote>
+<p><code>src/main/</code></p>
+</blockquote>
+<p>此源集包括所有构建变体共用的代码和资源。</p>
+<blockquote>
+<p>src/<code>&lt;buildType&gt;</code>/</p>
+</blockquote>
+<p>创建此源集可加入特定构建类型专用的代码和资源。示例：<code>src/jnidebug</code></p>
+<blockquote>
+<p>src/<code>&lt;productFlavor&gt;</code>/</p>
+</blockquote>
+<p>创建此源集可加入特定产品风味专用的代码和资源。比如百度渠道包：<code>src/baidu</code></p>
+<blockquote>
+<p>src/<code>&lt;productFlavorBuildType&gt;</code>/</p>
+</blockquote>
+<p>创建此源集可加入特定构建变体专用的代码和资源。<br>例如，要生成应用的“完全调试”版本，构建系统需要合并来自以下源集的代码、设置和资源。比如：百度的开发环境包：<code>src/baiduDebug</code></p>
+<h2 id="构建类型依赖配置"><a href="#构建类型依赖配置" class="headerlink" title="构建类型依赖配置"></a>构建类型依赖配置</h2><p>很多时候我们会把sdk或者api接口单独做成一个库，一般会有生产环境和测试环境之分，但在依赖的时候往往我们会像这样去引用：<code>compile project(&#39;:sdk&#39;)</code>，这样依赖的环境就是<code>release</code>，在开发调试的时候测试环境的时候就不行了。我们得换另外一种方式：</p>
+<blockquote>
+<p><code>&lt;buildType&gt;</code>Compile project()</p>
+</blockquote>
+<p>这样会根据不同的构建类型去依赖不同的包，比如我们测试环境的依赖包:<code>debugCompile project(&#39;:sdk&#39;)</code>，再比如上面的<code>jnidebug</code>：<code>jnidebugCompile project(&#39;:sdk&#39;)</code> </p>
+<p>那么问题来了，我当前的构建类型怎么对应到其他的<code>module</code>去呢？比如你的app要依赖sdk module 的debug 环境，那么你可以这么做：</p>
+<p><code>configuration</code>：目标<code>module</code>的<code>&lt;buildType&gt;</code>，比如你sdk 中<code>&lt;buildType&gt;</code>的<code>debug</code>构建类型</p>
+<p><code>debugCompile project(path: &#39;:sdk&#39;, configuration: &#39;debug&#39;)</code></p>
+<blockquote>
+<p><strong>综合示例：</strong></p>
+</blockquote>
+<p>1、先看app这边的<code>build.gradle</code>配置：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="keyword">true</span></span><br><span class="line">            <span class="function">proguardFiles <span class="title">getDefaultProguardFile</span><span class="params">(<span class="string">'proguard-android.txt'</span>)</span>, 'proguard-rules.pro'</span></span><br><span class="line"><span class="function">        &#125;</span></span><br><span class="line"><span class="function">        debug </span>&#123;</span><br><span class="line">            applicationIdSuffix <span class="string">'.debug'</span></span><br><span class="line">            minifyEnabled <span class="keyword">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 自定义的构建类型，名字随便取，一定要有意义</span></span><br><span class="line">        raedebug &#123;</span><br><span class="line">            initWith debug</span><br><span class="line">            applicationIdSuffix <span class="string">'.raedebug'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// 生成环境依赖</span></span><br><span class="line">    <span class="function">releaseCompile <span class="title">project</span><span class="params">(path: <span class="string">':sdk'</span>, configuration: <span class="string">'release'</span>)</span></span></span><br><span class="line"><span class="function">    <span class="comment">// 测试环境依赖</span></span></span><br><span class="line"><span class="function">    debugCompile <span class="title">project</span><span class="params">(path: <span class="string">':sdk'</span>, configuration: <span class="string">'debug'</span>)</span></span></span><br><span class="line"><span class="function">    <span class="comment">// 自定义构建类型依赖</span></span></span><br><span class="line"><span class="function">    raedebugCompile <span class="title">project</span><span class="params">(path: <span class="string">':sdk'</span>, configuration: <span class="string">'uutest'</span>)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>2、sdk module的<code>build.gradle</code>配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">'com.android.library'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">       buildTypes &#123;</span><br><span class="line">        debug &#123;</span><br><span class="line">            debuggable <span class="keyword">true</span></span><br><span class="line">            minifyEnabled <span class="keyword">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="keyword">false</span></span><br><span class="line">            <span class="function">proguardFiles <span class="title">getDefaultProguardFile</span><span class="params">(<span class="string">'proguard-android.txt'</span>)</span>, 'proguard-rules.pro'</span></span><br><span class="line"><span class="function">        &#125;</span></span><br><span class="line"><span class="function">        </span></span><br><span class="line"><span class="function">        <span class="comment">// 注意这里，跟第一点的 raedebugCompile project的configuration要匹配。</span></span></span><br><span class="line"><span class="function">        uutest </span>&#123;</span><br><span class="line">            initWith debug</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="多渠道打包-productFlavors"><a href="#多渠道打包-productFlavors" class="headerlink" title="多渠道打包 productFlavors"></a>多渠道打包 <code>productFlavors</code></h2><p>先看看<code>build.gradle</code>配置你就懂了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">android&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 渠道包定义，默认定义的名称就是渠道名称</span></span><br><span class="line">    productFlavors &#123;</span><br><span class="line"> </span><br><span class="line">        dev &#123;&#125; <span class="comment">// 测试</span></span><br><span class="line">        baidu &#123;&#125;        <span class="comment">// 百度手机助手</span></span><br><span class="line">        yinyongbao &#123;&#125;   <span class="comment">// 应用宝</span></span><br><span class="line">        m360 &#123;&#125;         <span class="comment">// 360手机助手</span></span><br><span class="line">        pp &#123;&#125;           <span class="comment">// PP助手</span></span><br><span class="line">        anzhi&#123;&#125;         <span class="comment">// 安智市场</span></span><br><span class="line">        xiaomi &#123;&#125;       <span class="comment">// 小米商店</span></span><br><span class="line">        letv &#123;&#125;         <span class="comment">// 乐视商店</span></span><br><span class="line">        huawei &#123;&#125;       <span class="comment">// 华为商店</span></span><br><span class="line">        lenovomm &#123;&#125;     <span class="comment">// 联想乐商店</span></span><br><span class="line">        other &#123;&#125;        <span class="comment">// 其他市场</span></span><br><span class="line">        official&#123;&#125;      <span class="comment">// 官方版本</span></span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 批量渠道包值替换</span></span><br><span class="line">    productFlavors.all &#123; flavor -&gt;</span><br><span class="line">        <span class="comment">// 友盟、极光推送渠道包， UMENG_CHANNEL 是根据你AndroidManifest.xml来配置的，请看下面。</span></span><br><span class="line">        flavor.manifestPlaceholders = [UMENG_CHANNEL: name, JPUSH_CHANNEL: name]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>AndroidManifest.xml</code> 配置：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">manifest</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">          <span class="attr">package</span>=<span class="string">"com.rae.demo"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">application</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:allowBackup</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:icon</span>=<span class="string">"@mipmap/ic_launcher"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:label</span>=<span class="string">"@string/app_name"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:supportsRtl</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:theme</span>=<span class="string">"@style/AppTheme"</span>&gt;</span></span><br><span class="line">       </span><br><span class="line">       <span class="comment">&lt;!--变量采用$&#123;变量名&#125;这样来替换，不仅限与&lt;meta-data /&gt; 标签，任何你想替换的都行。--&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:name</span>=<span class="string">"UMENG_APPKEY"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:value</span>=<span class="string">"$&#123;UMENG_APPKEY&#125;"</span>/&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:name</span>=<span class="string">"UMENG_CHANNEL"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:value</span>=<span class="string">"$&#123;UMENG_CHANNEL&#125;"</span>/&gt;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">&lt;!--$&#123;变量随变换&#125;--&gt;</span>   </span><br><span class="line">        <span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:name</span>=<span class="string">".DemoActivity"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:label</span>=<span class="string">"$&#123;变量随变换&#125;"</span>/&gt;</span></span><br><span class="line">            </span><br><span class="line">    <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>sync gradle之后看看gradle projects 面板列表就多出了好到渠道的任务了，Build Variants 面板也相对应多了这些构建类型。</p>
+<h2 id="APK输出配置"><a href="#APK输出配置" class="headerlink" title="APK输出配置"></a>APK输出配置</h2><p>在结合到多渠道打包后，运营的那边希望我们给的渠道包是这种格式的<code>app-{版本号}-{渠道名称}.apk</code>，那我们来看看怎么来满足这个多渠道打包输出apk文件名修改的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">android&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 输出文件配置</span></span><br><span class="line">   applicationVariants.all &#123; variant -&gt;</span><br><span class="line">        variant.outputs.each &#123; output -&gt;</span><br><span class="line">            def outputFile = output.outputFile</span><br><span class="line">            <span class="keyword">if</span> (outputFile != <span class="keyword">null</span> &amp;&amp; outputFile.name.endsWith(<span class="string">'.apk'</span>)) &#123;</span><br><span class="line">                def dirName = outputFile.parent <span class="comment">// 输出文件夹所在的位置</span></span><br><span class="line">            </span><br><span class="line">                <span class="comment">// 文件名修改</span></span><br><span class="line">                def fileName = <span class="string">"app-$&#123;output.processResources.variantName&#125;-$&#123;defaultConfig.versionName&#125;-$&#123;variant.flavorName&#125;.apk"</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 比如不想这么麻烦，直接在后面加上版本号也行：</span></span><br><span class="line">                <span class="comment">// def fileName = outputFile.name.replace(".apk", "-$&#123;defaultConfig.versionName&#125;.apk")</span></span><br><span class="line">                </span><br><span class="line">                </span><br><span class="line">                output.outputFile = <span class="keyword">new</span> File(dirName, fileName)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/07/JS-数组组合算法/" rel="next" title="JS 数组组合算法">
+                <i class="fa fa-chevron-left"></i> JS 数组组合算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/07/Android-library-上传到Nexus-的Maven私库中/" rel="prev" title="Android library 上传到Nexus 的Maven私库中">
+                Android library 上传到Nexus 的Maven私库中 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="SOHUCS"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars1.githubusercontent.com/u/7847664?v=3&s=460"
+               alt="RAE" />
+          <p class="site-author-name" itemprop="name">RAE</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#需求"><span class="nav-number">1.</span> <span class="nav-text">需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置构建类型-buildTypes"><span class="nav-number">2.</span> <span class="nav-text">配置构建类型 buildTypes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建源集"><span class="nav-number">3.</span> <span class="nav-text">构建源集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建类型依赖配置"><span class="nav-number">4.</span> <span class="nav-text">构建类型依赖配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多渠道打包-productFlavors"><span class="nav-number">5.</span> <span class="nav-text">多渠道打包 productFlavors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#APK输出配置"><span class="nav-number">6.</span> <span class="nav-text">APK输出配置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RAE</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+    <script type="text/javascript">
+    (function(){
+      var appid = 'cyt6A8DTE';
+      var conf = 'c193da28cff891748de44ad43138a944';
+      var width = window.innerWidth || document.documentElement.clientWidth;
+      if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){
+        window.changyan.api.config({appid:appid,conf:conf})});
+      }
+    })();
+    </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("XlrGy7s6rTwDKLJ0lwcyAw1H-gzGzoHsz", "cjjKhwaKEFsLitoL0LnjGjQM");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
