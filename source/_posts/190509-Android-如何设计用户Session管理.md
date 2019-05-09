@@ -1,13 +1,14 @@
 ---
-title: Android 如何设计用户Session管理？
-date: 2018-01-16 10:03:40
-tags:
-- Android
+title: Android-View篇之自定义验证码输入框
+date: 2019-05-09 09:22:54
+tags: View
 ---
 
 相信大家都知道，每一个App都需要登录，登录信息都保存在本地文件中，然后我们就写一堆的操作SharedPreferences的代码了。
 
 现在，你可以完全抛弃这种方法，一句代码搞定登录信息，用户信息管理。实现全局操作。为你的程序解耦。
+
+<!-- more -->
 
 ```java
  public void sessionDemo() {
@@ -195,4 +196,4 @@ public abstract class SessionManager {
 
 本文结束，非常简单的实现，但是却非常实用！
 
-GitHub开源：[https://github.com/raee/retrofit-ext.git](https://github.com/raee/retrofit-ext.git)
+开源：[https://github.com/raee/AndroidSessionManager](https://github.com/raee/AndroidSessionManager)

@@ -1,9 +1,7 @@
 ---
 title: Android 金融类项目模块化架构
-date: 2018-01-16 10:08:46
-tags:
-- Android
-- 金融
+date: 2019-05-09 09:22:54
+tags: View
 ---
 
 
@@ -11,16 +9,17 @@ tags:
 
 在以往的开发中，我们通常会使用MVC的模式进行开发，这样导致了Activity处理的逻辑非常的复杂，而且耦合度非常高，代码结构混乱、层次不清，各业务技术方案不统一，冗余代码充斥项目的各个角落；甚至连基本的包结构也是胡乱不堪，项目架构更是无从谈起。大家只不过是不停地往上堆砌代码添加新功能罢了。
 
+<!-- more -->
+
 其中业务层是一种非标准的 MVC 架构，Activity 和 Fragment 承担了 View 和 Controller 的职责：
 
+![传统的MVC模式](http://upload-images.jianshu.io/upload_images/2706530-0fdb81de65035098.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![](//upload-images.jianshu.io/upload_images/2706530-0fdb81de65035098.png)
-<div class="image-caption">传统的MVC模式</div>
 
 为了适应项目快速开发以及项目中代码的复用，解决项目中的耦合度。我们不断引入了 Retrofit、UniversalImageLoader、OkHttp、ButterKnife 等一系列成熟的开源库，同时我们也开发了自己的 UI 组件库 UIComponent、基础工具库 CommonUtils、基于第三方地图封装的 MapSDK、即时聊天模块 ChatLibrary 等等。这样就由基础组件层、业务组件层和业务层组成的三层架构。如下图：
 
-![](//upload-images.jianshu.io/upload_images/2706530-2dd70709f5031bc3.png)
-<div class="image-caption">MVP模式</div>
+![MVP模式](http://upload-images.jianshu.io/upload_images/2706530-2dd70709f5031bc3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 前面这种分层的架构本身是没太大问题的，即使到了现在我们的业务项目也已然是基于这种分层的架构来构建的，只不过在不断的迭代中我们做了些许调整（分层架构后面在介绍组件化和模块化的时候会详细介绍）。但是随着业务的不断迭代,我们慢慢发现业务层这种非标准的 MVC 架构带来了种种影响团队开发效率的问题：
 
@@ -32,16 +31,16 @@ Activity 和 Fragment 越来越多的同时承担了 Controller 和 View 的职�
 
 各层次模块之间职责不清晰等等
 
-# 二、项目整体架构
+# **二、项目整体架构**
 
 **整体项目架构如下图：**
 
-![](//upload-images.jianshu.io/upload_images/2706530-2284d27eb4438440.png)
-<div class="image-caption">整体项目架构</div>
+![整体项目架构](http://upload-images.jianshu.io/upload_images/2706530-2284d27eb4438440.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-# 三、项目分层说明
 
-## 整体项目分层：
+# **三、项目分层说明**
+
+## **整体项目分层：**
 
 **View Layer**: 只负责 UI 的绘制呈现，包含 Fragment 和一些自定义的 UI 组件，View 层需要实现 ViewInterface 接口。Activity 在项目中不再负责 View 的职责，仅仅是一个全局的控制者，负责创建 View 和 Presenter 的实例；
 
@@ -61,24 +60,23 @@ Activity 和 Fragment 越来越多的同时承担了 Controller 和 View 的职�
 
 第一利于团队多模块开发，第二利于开发速度，只针对单个模块进行编译，编译速度提升了。第三每个模块都可以单独成为APK运行，方便代码调试。第四就是易用性和重用性高。
 
-## 模块层
+## **模块层**
 
 对整个APP进行功能拆分，单独成立模块，每一个模块都独立依赖基础组件和业务组件。我们可以把 Basic Component Layer 和 Business Component Layer 放在一起看做是一层SDK，新的业务或者项目只需要依赖 SDK 就好。甚至我们可以做得更极致一些，开发一套自己的组件管理平台，业务方可以根据自己的需求选择自己需要的组件，定制业务专属的SDK。业务端和SDK 的关系如下图所示：
 
-![](//upload-images.jianshu.io/upload_images/2706530-c9b9eb047dbbb9b6.jpg)
-<div class="image-caption">业务端和SDK 的关系</div>
+![业务端和SDK 的关系](http://upload-images.jianshu.io/upload_images/2706530-c9b9eb047dbbb9b6.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-## 业务逻辑层
+## **业务逻辑层**
 
 封装了与模块层的数据交和UI回调，实际上就相当于Presenter的职责。调用接口以及数据处理都在这一层里面做，最终把结果回调给界面。
 
 另外的职责就是封装常用的公共模块如数据库操作，缓存操作，HTTP请求等。
 
-这一层可以使用RxJava，可以很好的解决嵌套回调的问题。[RxJava系列的文章可以参考这里](https://link.jianshu.com?t=https://zhuanlan.zhihu.com/p/20687178)
+这一层可以使用RxJava，可以很好的解决嵌套回调的问题。[RxJava系列的文章可以参考这里](https://zhuanlan.zhihu.com/p/20687178)
 
 各 Layer 间严禁反向依赖：每个层要进行依赖，先画好层于层直接的调用关系，禁止相互依赖。有相互依赖的把公共部分单独拆分。
 
-## 基础组件层
+## **基础组件层**
 
 这一层比较好理解，封装基础组件，比如模块化需要用到的Router来连接，并且可以管理Activity的生命周期。还有一些基础UIWidget库，比如股票的图表。
 
@@ -86,12 +84,12 @@ Activity 和 Fragment 越来越多的同时承担了 Controller 和 View 的职�
 
 项目间的依赖通过私有maven库进行管理，特别是sdk跟presenter这一层，强制把UI跟逻辑分离。使用maven的一个弊端就是需要频繁的上传跟重新build。前期可以在项目用**complie project(':sdk')** 来依赖。
 
-## API 接口层
+## **API 接口层**
 
 API接口作为核心的一层，每个模块都需要调用该层，我们采用分功能来设计接口，并提供统一的接口工厂来获取接口的实例。UML图如下：
 
-![](//upload-images.jianshu.io/upload_images/2706530-bb187404a13c6fb0.png)
-<div class="image-caption"></div></div>
+
+![](http://upload-images.jianshu.io/upload_images/2706530-bb187404a13c6fb0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 接口层编码的时候要注意：
 
@@ -113,32 +111,33 @@ API接口作为核心的一层，每个模块都需要调用该层，我们采�
 
 缓存默认是关闭的，根据需要来给请求缓存。
 
-## Model
+## **Model**
 
 一般情况下我们的实体层（entity、bean、model）这些都是跟sdk处于一层的，为了避免每个模块为了使用实体层而引用sdk，所以要把这个实体层单独一层出来，避免相互之间有反向依赖的可能性。
 
 除了常用的实体层之外，Model层还具有负责检索、存储、操作数据，包括来自网络、数据库、磁盘文件和 SharedPreferences 的数据的功能，只是都归根到Model这一块来。实际上他们都是单独开来的。
 
-## UIWidget
+## **UIWidget**
 
 View划分成若干小模块，不单单可以使用当前项目，更为了以后方便集成到其他项目当中去。
 
-![](//upload-images.jianshu.io/upload_images/2706530-e74d1c82bb6cf15b.png)
-<div class="image-caption">UIWidget</div>
+
+![UIWidget](http://upload-images.jianshu.io/upload_images/2706530-e74d1c82bb6cf15b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 ## Router 路由管理
 
 组件化和模块化使得程序更加灵活，为了避免在app对各个模块以及组件的依赖当组件发生改变的时候代码修改很大。所以由RouterManger去统一管理各个模块组件之间的跳转。
 
-实现方式可以采用[ARouter](https://link.jianshu.com?t=https://github.com/alibaba/ARouter)，支持Url方式的跳转。
-
-![](//upload-images.jianshu.io/upload_images/2706530-b5bee6a64f546df2.png)
-<div class="image-caption">APP路由管理</div>
+实现方式可以采用[ARouter](https://github.com/alibaba/ARouter)，支持Url方式的跳转。
 
 
-# 四、项目安全说明
+![APP路由管理](http://upload-images.jianshu.io/upload_images/2706530-b5bee6a64f546df2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-## 接口安全
+
+# **四、项目安全说明**
+
+## **接口安全**
 
 接口使用HTTPS加密证书进行传输，并进行用户鉴权，用户鉴权方面则打算采用Token方式。用户登录之后分配一个accessToken和一个refreshToken，accessToken用于发起用户请求，refreshToken用于更新accessToken。accessToken会设置有效期，可以设为24小时。而用户退出登录之后，accessToken和refreshToken都将作废。重新登录之后会分配新的accessToken和refreshToken。
 
@@ -154,8 +153,9 @@ View划分成若干小模块，不单单可以使用当前项目，更为了以�
 
 鉴权流程如下：
 
-![](//upload-images.jianshu.io/upload_images/2706530-97716f435c4f3e76.png)
-<div class="image-caption">接口鉴权流程</div>
+
+![接口鉴权流程](http://upload-images.jianshu.io/upload_images/2706530-97716f435c4f3e76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 **最后总结设计为：**
 
@@ -175,17 +175,13 @@ android的apk文件实际上是压缩文件，很容易被反编译工具进行�
 
 发布时对代码进行混淆编译
 
-第三方APK文件加固
+第三方APK文件加固，加固网站：
 
-第三方加固网站：
+- [爱加密](http://www.ijiami.cn/)
+- [360加固助手](http://jiagu.360.cn/)
+- [梆梆安全](https://www.bangcle.com/)
 
-[爱加密](https://link.jianshu.com?t=http://www.ijiami.cn/)
-
-[360加固助手](https://link.jianshu.com?t=http://jiagu.360.cn/)
-
-[梆梆安全](https://link.jianshu.com?t=https://www.bangcle.com/)
-
-# 五、模块说明
+# **五、模块说明**
 
 **行情模块（Quotation Module）**
 
@@ -203,25 +199,21 @@ android的apk文件实际上是压缩文件，很容易被反编译工具进行�
 
 **行情服务接口方法：**
 
-start() 启动服务
+- start() 启动服务
+- stop() 停止服务
+- getStatus() 获取当前状态
+- register(object handler, QuotationAction action) 订阅行情
+- unregister(); 反注册行情
 
-stop() 停止服务
 
-getStatus() 获取当前状态
+![行情模块](http://upload-images.jianshu.io/upload_images/2706530-4a9bf1897132ebe6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-register(object handler, QuotationAction action) 订阅行情
 
-unregister(); 反注册行情
-
-![](//upload-images.jianshu.io/upload_images/2706530-4a9bf1897132ebe6.png)
-<div class="image-caption">行情模块</div>
-
-## 用户模块（User Module）
+## **用户模块（User Module）**
 
 依赖项：API
 
-![](//upload-images.jianshu.io/upload_images/2706530-e9c2a30d595e5f84.png)
-<div class="image-caption">用户模块</div>
+![用户模块](http://upload-images.jianshu.io/upload_images/2706530-e9c2a30d595e5f84.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 说明：
 
@@ -229,23 +221,22 @@ User Manager ：用户管理，**管理当前用户**的登录状态、用户信
 
 User Module：用户模块，跟用户相关的各个功能的业务处理、数据处理
 
-## 交易模块（Trade Module）
+## **交易模块（Trade Module）**
 
 依赖项：API、行情模块
 
 其他模块需要调用交易模块都是通过路由跳转的方式调用不会直接调用到内部方法里面，所以交易模块重点还是调用API进行数据处理：
 
-![](//upload-images.jianshu.io/upload_images/2706530-42e3b8b5ecf96445.png)
-<div class="image-caption">交易模块</div>
+
+![交易模块](http://upload-images.jianshu.io/upload_images/2706530-42e3b8b5ecf96445.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 本文参考链接：
 
-[安居客 Android 项目架构演进](https://link.jianshu.com?t=http://mp.weixin.qq.com/s?__biz=MzA4NTQwNDcyMA==&amp;mid=2650662653&amp;idx=1&amp;sn=e15a36e4460eb3d1890d92aa921c0962&amp;chksm=87d13ba2b0a6b2b43c24abfa56c6fc78fcae2746cb4812cc87a8e8495e0231bde6bdbfe8957b&amp;mpshare=1&amp;scene=23&amp;srcid=0401P1BfNuztcl0iX8HY6x0D#rd)
+- [安居客 Android 项目架构演进](http://mp.weixin.qq.com/s?__biz=MzA4NTQwNDcyMA==&amp;mid=2650662653&amp;idx=1&amp;sn=e15a36e4460eb3d1890d92aa921c0962&amp;chksm=87d13ba2b0a6b2b43c24abfa56c6fc78fcae2746cb4812cc87a8e8495e0231bde6bdbfe8957b&amp;mpshare=1&amp;scene=23&amp;srcid=0401P1BfNuztcl0iX8HY6x0D#rd)
+- [Android组件化项目详细实施方案](http://mp.weixin.qq.com/s?__biz=MzI2OTQxMTM4OQ==&amp;mid=2247484720&amp;idx=1&amp;sn=6626e31308d58ec9f2caa770006a3220&amp;chksm=eae1f062dd9679746008678118859a0c732db80ed3413cb651f92753f63910d84ebca8a4793f&amp;mpshare=1&amp;scene=23&amp;srcid=0401fX5isQMtiX6nRAPaKDB8#rd)
+- [App项目实战之路(二):API篇](http://keeganlee.me/post/practice/20160812)
+- [APK 的自我保护](http://bbs.pediy.com/thread-183116.htm)
+- [如果对MVP模式还不够了解的可以参考google官方例子](https://github.com/googlesamples/android-architecture)
 
-[Android组件化项目详细实施方案](https://link.jianshu.com?t=http://mp.weixin.qq.com/s?__biz=MzI2OTQxMTM4OQ==&amp;mid=2247484720&amp;idx=1&amp;sn=6626e31308d58ec9f2caa770006a3220&amp;chksm=eae1f062dd9679746008678118859a0c732db80ed3413cb651f92753f63910d84ebca8a4793f&amp;mpshare=1&amp;scene=23&amp;srcid=0401fX5isQMtiX6nRAPaKDB8#rd)
 
-[App项目实战之路(二):API篇](https://link.jianshu.com?t=http://keeganlee.me/post/practice/20160812)
-
-[APK 的自我保护](https://link.jianshu.com?t=http://bbs.pediy.com/thread-183116.htm)
-
-[如果对MVP模式还不够了解的可以参考google官方例子](https://link.jianshu.com?t=https://github.com/googlesamples/android-architecture)
